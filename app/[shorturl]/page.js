@@ -1,19 +1,18 @@
 import { redirect } from "next/navigation"
-import { getUrlCollection } from "@/lib/urlCollection";
-
+import { getUrlCollection } from "@/lib/urlCollection"
 
 export default async function Page({ params }) {
-    const shorturl = (await params).shorturl
+  const resolvedParams = await params
+  const shorturl = (resolvedParams.shorturl || "").trim().toLowerCase()
 
-    try {
-      const collection = await getUrlCollection();
-      const doc = await collection.findOne({ shorturl: shorturl.toLowerCase() });
-      if (doc) {
-        redirect(doc.url);
-      }
-    } catch (error) {
-      console.error("Short URL redirect error:", error);
-    }
+  if (!shorturl) redirect("/")
 
-    redirect("/");
+  const collection = await getUrlCollection()
+  const doc = await collection.findOne({ shorturl })
+
+  if (doc?.url) {
+    redirect(doc.url)
   }
+
+  redirect("/")
+}
