@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TinyTornado URL Shortener
 
-## Getting Started
+TinyTornado is a URL shortener built with Next.js (App Router) and MongoDB.
 
-First, run the development server:
+## Features
+
+- Create custom short links (`/shorten`)
+- Redirect from short codes (`/[shorturl]`)
+- About and Contact pages
+- MongoDB-backed storage
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- MongoDB Node Driver
+- Tailwind CSS 4
+
+## Prerequisites
+
+- Node.js 20+
+- npm
+- MongoDB (local or Atlas)
+
+## Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+MONGODB_URI=mongodb://localhost:27017
+NEXT_PUBLIC_HOST=http://localhost:3000
+```
+
+Notes:
+
+- `MONGODB_URI`: your MongoDB connection string.
+- `NEXT_PUBLIC_HOST`: base URL used to display generated links in the UI.
+
+## Local Development
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start MongoDB (if using local MongoDB).
+
+3. Run dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+### Option 1: Deploy to Vercel (Recommended)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push this project to GitHub.
+2. Import repository in Vercel.
+3. Add environment variables in Vercel Project Settings:
+   - `MONGODB_URI`
+   - `NEXT_PUBLIC_HOST` (example: `https://your-domain.vercel.app`)
+4. Deploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Option 2: Deploy on a VPS
 
-## Deploy on Vercel
+1. Copy project to server.
+2. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm install
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Set production environment variables (`.env.local` or system env).
+4. Build and start:
+
+```bash
+npm run build
+npm run start
+```
+
+5. Put it behind Nginx/Apache reverse proxy.
+
+## API Endpoint
+
+- `POST /api/generate`
+  - Body:
+
+```json
+{
+  "url": "https://example.com",
+  "shorturl": "example"
+}
+```
+
+Returns success/error JSON with message.
+
+## Troubleshooting
+
+- `Unable to create short URL...`: verify `MONGODB_URI` and ensure MongoDB is reachable.
+- Redirect not working: confirm document exists in `tinytornado.urls` collection.
+- Wrong generated host: set `NEXT_PUBLIC_HOST` to the correct public URL.

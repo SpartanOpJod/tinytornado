@@ -1,22 +1,19 @@
 import { redirect } from "next/navigation"
-import clientPromise from "@/lib/mongodb"
+import { getUrlCollection } from "@/lib/urlCollection";
 
 
 export default async function Page({ params }) {
     const shorturl = (await params).shorturl
 
-    const client = await clientPromise;
-    const db = client.db("TinyTornado")
-    const collection = db.collection("Urls")
-
-    const doc = await collection.findOne({shorturl: shorturl})
-    console.log(doc)
-    if(doc){
-         redirect(doc.url)
-    }
-    else{
-        redirect(`${process.env.NEXT_PUBLIC_HOST}`)
+    try {
+      const collection = await getUrlCollection();
+      const doc = await collection.findOne({ shorturl: shorturl.toLowerCase() });
+      if (doc) {
+        redirect(doc.url);
+      }
+    } catch (error) {
+      console.error("Short URL redirect error:", error);
     }
 
-    return <div>My Post: {url}</div>
+    redirect("/");
   }

@@ -6,8 +6,15 @@ const Shorten = () => {
     const [url, seturl] = useState("")
     const [shorturl, setshorturl] = useState("")
     const [generated, setGenerated] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    const generate = () => {
+    const generate = async () => {
+        if (!url || !shorturl) {
+            alert("Please enter both URL and short code.")
+            return
+        }
+
+        setLoading(true)
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
@@ -23,17 +30,25 @@ const Shorten = () => {
             redirect: "follow"
         };
 
-        fetch("/api/generate", requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`)
-                seturl("")   
-                setshorturl("")
-                console.log(result)
-                alert(result.message)
-            
-            })
-            .catch((error) => console.error(error));
+        try {
+            const response = await fetch("/api/generate", requestOptions)
+            const result = await response.json()
+            if (!response.ok || !result.success) {
+                alert(result.message || "Failed to generate short URL.")
+                return
+            }
+
+            const host = (process.env.NEXT_PUBLIC_HOST || window.location.origin).replace(/\/$/, "")
+            setGenerated(`${host}/${shorturl.toLowerCase()}`)
+            seturl("")
+            setshorturl("")
+            alert(result.message)
+        } catch (error) {
+            console.error(error)
+            alert("Something went wrong. Please try again.")
+        } finally {
+            setLoading(false)
+        }
     }
 
 
@@ -52,7 +67,9 @@ const Shorten = () => {
                     className='px-4 py-2 focus:outline-purple-600 rounded-md'
                     placeholder='Enter your preferred short URL text'
                     onChange={e => { setshorturl(e.target.value) }} />
-                <button onClick={generate} className='bg-purple-500 rounded-lg shadow-lg p-3 py-1 my-3 font-bold text-white'>Generate</button>
+                <button onClick={generate} disabled={loading} className='bg-purple-500 rounded-lg shadow-lg p-3 py-1 my-3 font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed'>
+                    {loading ? "Generating..." : "Generate"}
+                </button>
             </div>
 
             {generated && <> <span className='font-bold text-lg'>Your Link </span><code><Link target="_blank" href={generated}>{generated}</Link> 
