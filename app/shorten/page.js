@@ -1,84 +1,120 @@
 "use client"
-import Link from 'next/link'
-import React, { useState } from 'react'
+import Link from "next/link"
+import React, { useState } from "react"
 
 const Shorten = () => {
-    const [url, seturl] = useState("")
-    const [shorturl, setshorturl] = useState("")
-    const [generated, setGenerated] = useState("")
-    const [loading, setLoading] = useState(false)
+  const [url, seturl] = useState("")
+  const [shorturl, setshorturl] = useState("")
+  const [generated, setGenerated] = useState("")
+  const [loading, setLoading] = useState(false)
 
-    const generate = async () => {
-        const cleanedUrl = url.trim()
-        const cleanedShort = shorturl.trim().toLowerCase()
-        if (!cleanedUrl || !cleanedShort) {
-            alert("Please enter both URL and short code.")
-            return
-        }
+  const generate = async () => {
+    const cleanedUrl = url.trim()
+    const cleanedShort = shorturl.trim().toLowerCase()
 
-        setLoading(true)
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        const raw = JSON.stringify({
-            "url": cleanedUrl,
-            "shorturl": cleanedShort
-        });
-
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
-
-        try {
-            const response = await fetch("/api/generate", requestOptions)
-            const result = await response.json()
-
-            if (!response.ok || !result.success) {
-                alert(result.message || "Failed to generate short URL.")
-                return
-            }
-
-            const host = (process.env.NEXT_PUBLIC_HOST || window.location.origin).replace(/\/$/, "")
-            setGenerated(`${host}/${encodeURIComponent(cleanedShort)}`)
-            seturl("")
-            setshorturl("")
-            alert(result.message)
-        } catch (error) {
-            console.error(error)
-            alert("Something went wrong. Please try again.")
-        } finally {
-            setLoading(false)
-        }
+    if (!cleanedUrl || !cleanedShort) {
+      alert("Please enter both URL and short code.")
+      return
     }
 
+    setLoading(true)
 
-    return (
-        <div className='mx-auto max-w-lg bg-blue-100 my-16 p-8 rounded-lg flex flex-col gap-4'>
-            <h1 className='font-bold text-2xl'>Generate your short URLs</h1>
-            <div className='flex flex-col gap-2'>
-                <input type="text"
-                    value={url}
-                    className='px-4 py-2 focus:outline-blue-600 rounded-md'
-                    placeholder='Enter your URL'
-                    onChange={e => { seturl(e.target.value) }} />
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: cleanedUrl,
+          shorturl: cleanedShort
+        })
+      })
 
-                <input type="text"
-                    value={shorturl}
-                    className='px-4 py-2 focus:outline-blue-600 rounded-md'
-                    placeholder='Enter your preferred short URL text'
-                    onChange={e => { setshorturl(e.target.value) }} />
-                <button onClick={generate} disabled={loading} className='bg-blue-500 rounded-lg shadow-lg p-3 py-1 my-3 font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed'>
-                    {loading ? "Generating..." : "Generate"}
-                </button>
-            </div>
+      const result = await response.json()
 
-            {generated && <> <span className='font-bold text-lg'>Your Link </span><code><Link target="_blank" href={generated}>{generated}</Link> 
-                </code></>}
+      if (!response.ok || !result.success) {
+        alert(result.message || "Failed to generate short URL.")
+        return
+      }
+
+      const host = (process.env.NEXT_PUBLIC_HOST || window.location.origin).replace(/\/$/, "")
+      setGenerated(`${host}/${encodeURIComponent(cleanedShort)}`)
+      seturl("")
+      setshorturl("")
+    } catch (error) {
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generated)
+  }
+
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center px-6">
+      <div className="w-full max-w-xl bg-white shadow-2xl rounded-2xl p-10 space-y-6 transition-all duration-300 hover:shadow-blue-200">
+
+        <h1 className="text-3xl font-bold text-gray-900 text-center">
+          Create a Short URL
+        </h1>
+
+        <p className="text-gray-500 text-center">
+          Paste your long URL and choose a custom short code.
+        </p>
+
+        <div className="space-y-4">
+
+          <input
+            type="text"
+            value={url}
+            placeholder="Enter your long URL"
+            onChange={e => seturl(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          />
+
+          <input
+            type="text"
+            value={shorturl}
+            placeholder="Enter preferred short code"
+            onChange={e => setshorturl(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+          />
+
+          <button
+            onClick={generate}
+            disabled={loading}
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? "Generating..." : "Generate Short Link"}
+          </button>
+
         </div>
-    )
+
+        {generated && (
+          <div className="mt-6 p-4 bg-gray-50 border rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-300">
+            
+            <Link
+              target="_blank"
+              href={generated}
+              className="text-blue-600 font-medium break-all hover:underline"
+            >
+              {generated}
+            </Link>
+
+            <button
+              onClick={copyToClipboard}
+              className="px-4 py-2 bg-gray-800 hover:bg-black text-white rounded-lg text-sm transition"
+            >
+              Copy
+            </button>
+
+          </div>
+        )}
+
+      </div>
+    </div>
+  )
 }
 
 export default Shorten
