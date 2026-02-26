@@ -67,7 +67,7 @@ export default function ContactPage() {
 
         <div className="hidden md:block">
           <Image
-            src="/contact-illustration.svg"
+            src="/customer-support.svg"
             width={500}
             height={500}
             alt="Contact illustration"

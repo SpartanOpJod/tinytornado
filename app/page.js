@@ -36,7 +36,7 @@ export default function Home() {
             </Link>
 
             <Link href="https://github.com/SpartanOpJod/tinytornado" target="_blank">
-              <button className="px-6 py-3 border border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-300 font-semibold rounded-xl bg-white shadow-sm">
+              <button className="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all duration-200 font-semibold rounded-xl shadow-md">
                 View on GitHub
               </button>
             </Link>
