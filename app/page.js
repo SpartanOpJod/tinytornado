@@ -4,8 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar"; 
 import Link from "next/link";
 
-
-
 const poppins = localFont({
   src: "./fonts/Poppins-ExtraBold.ttf",
   variable: "--font-poppins",
@@ -14,22 +12,46 @@ const poppins = localFont({
 
 export default function Home() {
   return (
-    <main className="bg-purple-100">
-      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[60vh]">
-        <div className="flex flex-col gap-4 items-center justify-center p-8 md:p-0">
-          <p className={`text-3xl font-bold ${poppins.className}`}>
-            The best URL shortener in the Market
+    <main className="bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[85vh] items-center max-w-7xl mx-auto px-6">
+        
+        <div className="flex flex-col gap-6 text-center md:text-left">
+          
+          <h1 className={`text-4xl md:text-6xl font-extrabold leading-tight text-gray-900 ${poppins.className}`}>
+            The smartest way to
+            <span className="text-blue-600"> shorten URLs</span>
+          </h1>
+
+          <p className="text-gray-600 text-lg md:text-xl max-w-xl mx-auto md:mx-0">
+            Simple. Fast. Reliable. No logins, no clutter, no tracking drama. 
+            Just paste your link, choose your code, and share instantly.
           </p>
-          <p className="px-2 md:px-20 text-center">
-            We are a straightforward URL shortener. No sign-up walls, no complicated flow, and no unnecessary tracking. Paste a URL, pick a short code, and share it instantly.
-          </p>
-          <div className='flex gap-3 justify-start'>
-          <Link href="/shorten"><button className='bg-blue-500 rounded-lg shadow-lg p-3 py-1 font-bold text-white'>Try Now</button></Link>
-          <Link href="https://github.com" target="_blank"><button className='bg-blue-500 rounded-lg shadow-lg p-3 py-1 font-bold text-white'>GitHub</button></Link>
+
+          <div className="flex gap-4 justify-center md:justify-start pt-4">
+            
+            <Link href="/shorten">
+              <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 transition-all duration-300 text-white font-semibold rounded-xl shadow-md hover:shadow-xl">
+                Get Started
+              </button>
+            </Link>
+
+            <Link href="https://github.com/SpartanOpJod/tinytornado" target="_blank">
+              <button className="px-6 py-3 border border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-300 font-semibold rounded-xl bg-white shadow-sm">
+                View on GitHub
+              </button>
+            </Link>
+
+          </div>
+
         </div>
-        </div>
-        <div className="hidden md:flex justify-start relative">
-          <Image className="mix-blend-darken" alt="an Image of a vector" src={"/vector.jpg"} fill={true}    />
+
+        <div className="hidden md:flex justify-center relative h-[500px]">
+          <Image 
+            className="object-contain drop-shadow-2xl"
+            alt="Vector illustration"
+            src={"/vector.jpg"} 
+            fill
+          />
         </div>
 
       </section>
