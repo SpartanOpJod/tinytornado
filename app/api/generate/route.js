@@ -13,13 +13,13 @@ export async function POST(request) {
       );
     }
 
-    const shortCodePattern = /^[a-zA-Z0-9_-]{3,30}$/;
+    const shortCodePattern = /^[a-zA-Z0-9_-]{2,30}$/;
     if (!shortCodePattern.test(shorturl)) {
       return Response.json(
         {
           success: false,
           error: true,
-          message: "Short code must be 3-30 chars and contain only letters, numbers, - or _.",
+          message: "Short code must be 2-30 chars and contain only letters, numbers, - or _.",
         },
         { status: 400 }
       );
